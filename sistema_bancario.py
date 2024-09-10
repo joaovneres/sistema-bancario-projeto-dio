@@ -1,4 +1,5 @@
 import re
+import datetime
 
 class Cliente:
     def __init__(self, nome, data_nascimento, cpf, endereco):
@@ -75,6 +76,11 @@ def exibir_clientes():
         print(f"CPF: {cliente.cpf}")
         print(f"Endereço: {cliente.endereco}")
         print("===============================")
+        
+def registrar_transacao(extrato, tipo, valor):
+    horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    extrato += f"{horario} - {tipo}: R$ {valor:.2f}\n"
+    return extrato
 
 def exibir_menu():
     print("\nSistema Bancário")
@@ -88,7 +94,7 @@ def exibir_menu():
 def depositar(saldo, valor, extrato):
     if valor > 0:
         saldo += valor
-        extrato += f"Depósito: R$ {valor:.2f}\n"
+        extrato = registrar_transacao(extrato, "Depósito", valor)
         print(f"Depósito de R${valor:.2f} realizado com sucesso.")
     else:
         print("Operação falhou! O valor informado é inválido.")
@@ -107,7 +113,7 @@ def sacar(saldo, valor, extrato, limite, numero_saques, LIMITE_SAQUES):
         print("Operação falhou! Número máximo de saques excedido.")
     elif valor > 0:
         saldo -= valor
-        extrato += f"Saque: R$ {valor:.2f}\n"
+        extrato = registrar_transacao(extrato, "Saque", valor)
         numero_saques += 1
         print(f"Saque de R${valor:.2f} realizado com sucesso.")
     else:
