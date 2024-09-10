@@ -6,6 +6,21 @@ class Cliente:
         self.data_nascimento = data_nascimento
         self.cpf = cpf
         self.endereco = endereco
+        
+class ContaCorrente:
+    numero_conta_sequencial = 1
+
+    def __init__(self, cliente):
+        self.agencia = "0001"
+        self.numero = ContaCorrente.numero_conta_sequencial
+        self.cliente = cliente
+        
+        ContaCorrente.numero_conta_sequencial += 1
+
+    def exibir_detalhes(self):
+        print(f"Agência: {self.agencia}")
+        print(f"Número da Conta: {self.numero}")
+        print(f"Cliente: {self.cliente.nome} - CPF: {self.cliente.cpf}")
 
 clientes_cadastrados = {}
 
@@ -104,6 +119,52 @@ def exibir_extrato(extrato, saldo):
     print("Não foram realizadas movimentações." if not extrato else extrato)
     print(f"\nSaldo: R$ {saldo:.2f}")
     print("==========================================")
+    
+def cadastrar_conta_corrente():
+    cpf = input("Digite o CPF do cliente: ").strip()
+    
+    if cpf not in clientes_cadastrados:
+        print("Erro: Cliente não encontrado.")
+        return
+    
+    cliente = clientes_cadastrados[cpf]
+    nova_conta = ContaCorrente(cliente)
+
+    if not hasattr(cliente, "contas"):
+        cliente.contas = []
+    
+    cliente.contas.append(nova_conta)
+    print(f"Conta corrente criada com sucesso para {cliente.nome}!")
+    nova_conta.exibir_detalhes()
+
+def exibir_contas_cliente():
+    cpf = input("Digite o CPF do cliente: ").strip()
+
+    if cpf not in clientes_cadastrados:
+        print("Erro: Cliente não encontrado.")
+        return
+
+    cliente = clientes_cadastrados[cpf]
+    
+    if not hasattr(cliente, "contas") or len(cliente.contas) == 0:
+        print(f"O cliente {cliente.nome} não possui contas cadastradas.")
+        return
+
+    print(f"\n===== Contas do Cliente {cliente.nome} =====")
+    for conta in cliente.contas:
+        conta.exibir_detalhes()
+        print("===============================")
+
+def exibir_menu():
+    print("\nSistema Bancário")
+    print("[1] Depositar")
+    print("[2] Sacar")
+    print("[3] Exibir Extrato")
+    print("[4] Cadastrar Cliente")
+    print("[5] Exibir Clientes")
+    print("[6] Cadastrar Conta Corrente")
+    print("[7] Exibir Contas do Cliente")
+    print("[8] Sair")
 
 def main():
     saldo = 0
@@ -140,6 +201,12 @@ def main():
             exibir_clientes()
 
         elif opcao == "6":
+            cadastrar_conta_corrente()
+
+        elif opcao == "7":
+            exibir_contas_cliente()
+
+        elif opcao == "8":
             print("Saindo do sistema...")
             break
         
